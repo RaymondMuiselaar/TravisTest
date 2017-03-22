@@ -2,5 +2,9 @@ language: objective-c
 
 osx_image: xcode8.1
 
+install:
+- yarn
+- gem update fastlane
+
 script:
 - fastlane test
