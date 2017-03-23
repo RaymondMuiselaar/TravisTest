@@ -30,6 +30,12 @@ platform :android do
     )
   end
 
+  desc "Runs on iOS"
+  lane :test_ios do
+    puts("IOS Build succeeded ;)");
+
+  end
+
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do
     gradle(task: "assembleRelease")

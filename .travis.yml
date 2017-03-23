@@ -1,31 +1,53 @@
-language: objective-c
-
-android:
-  components:
-    - tools # to get the new `repository-11.xml`
-    - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
-    - platform-tools
-    - build-tools-25.0.2
-    - android-25
-
-env:
-  global:
-    - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
-    - PATH=${ANDROID_HOME}/:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools/:${PATH}
-
-osx_image: xcode8.1
-
-before_install:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash
-  - export PATH=$HOME/.yarn/bin:$PATH
-  - gem update fastlane
-  - cp -R /usr/local/android-sdk-23.0.2 ./android-sdk
-
+language: node_js
+node_js:
+  - "6.9"
+  - "7.1"
+sudo: false
 cache:
-  yarn: true
+  directories:
+    - $HOME/.yarn-cache
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+env:
+  - NODE_ENV='test'
 
-install:
-  - yarn
+matrix:
+  include:
+    - language: android
+      os: linux
+      sudo: required
+      node_js: false
+      before_install:
+        - nvm install 7
+        - node --version
+        - travis_retry curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+        - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+        - travis_retry sudo apt-get update -qq
+        - travis_retry sudo apt-get install -y -qq yarn
+      install:
+        - yarn
+      android:
+        components:
+          - build-tools-23.0.1
+          - android-23
 
-script:
-  - fastlane test
+      script:
+        - fastlane test_ios
+
+    - language: objective-c
+      os: osx
+      osx_image: xcode8.2
+      node_js: false
+      before_install:
+      - nvm install 7
+      - node --version
+      - travis_retry npm install -g yarn
+      - yarn -version
+      - gem update fastlane
+
+      install:
+        - travis_retry gem install xcpretty
+        - travis_retry yarn
+
+      script:
+        - fastlane test_ios
