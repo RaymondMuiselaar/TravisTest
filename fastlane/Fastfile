@@ -23,6 +23,11 @@ platform :android do
   desc "Runs all the tests"
   lane :test do
     puts("Build succeeded");
+
+    gradle(
+      task: 'clean', 
+      project_dir: "android/"
+    )
   end
 
   desc "Submit a new Beta Build to Crashlytics Beta"
