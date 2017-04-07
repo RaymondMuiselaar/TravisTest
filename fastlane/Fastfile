@@ -30,10 +30,14 @@ platform :android do
       project_dir: "android/",
     )
 
+    sh("cd .. && touch changelog.txt")
+    File.write("./changelog.txt", ENV["GIT_COMMIT_LOG"])
+    sh "cat ./changelog.txt"
+
     crashlytics(
         api_token: '8a258890f5e1a415c5e1f14b19b4587dc35bbca2',
         build_secret: 'e224baf6fff6088a25a083cb865c4a152519dba2de29471372c1df4faf7f9ce3',
-        notes: "Uploaded to Crashlytics beta"  
+        notes_path: "fastlane/changelog.txt"  
     )
   end
 
